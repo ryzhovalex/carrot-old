@@ -17,6 +17,10 @@ plugins for those who interested in adopting the application for themselves.
 Product will be successful only if i will make usage of it on regular basis
 for my personal projects and tasks.
 
+This is app is software under free-licence that everyone can deploy on own
+machine and use. Contributing / Making open-source plugins to reach desirable 
+functionality is appreciated.
+
 # Requirements / System overview
 ## User requirements
 1. As a user, i want to conveniently manage my tasks, projects and ideas, so
