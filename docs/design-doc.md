@@ -1,4 +1,5 @@
-# Goals & Vision
+# Carrot: Design document
+## Goals & Vision
 Create todo list complying and extending personal experience on task management
 and implementing best from Maxim Dorofeev's Jedi Techniques.
 
@@ -12,48 +13,52 @@ By building this application i'm solving these problems:
 
 In terms of audience, i'm considering only myself, all new features will be
 analyzed in first order through my experience, but i will appreciate adding
-plugins for those who interested in adopting the application for themselves.
+extensions for those who interested in adopting the application for themselves.
 
 Product will be successful only if i will make usage of it on regular basis
 for my personal projects and tasks.
 
 This is app is software under free-licence that everyone can deploy on own
-machine and use. Contributing / Making open-source plugins to reach desirable 
-functionality is appreciated.
+machine and use. Contributing / Making open-source extensions to reach
+desirable functionality is appreciated.
 
-# Requirements / System overview
-## User requirements
+## Requirements / System overview
+### User requirements
 1. As a user, i want to conveniently manage my tasks, projects and ideas, so
    that i can effectively manage Jedi's instances in one place
 2. As a user, i want to have only required for me set of functionality, so
    that i can be more focused on completing my tasks, rather than playing
    with features.
-3. As a user, i want to have access to core features / plugins that suits my
+3. As a user, i want to have access to core features / extensions that suits my
    needs, e.g. Jedi's `task ages`, so that i can implement my own vision to
    task management in the app
 
-## Functional requirements
-1. Minimal instance set: `Task`, `Project`, `Event`, `Idea`
+### Functional requirements
+1. Minimal instance set: `Task`, `Project`
 2. Minimal functionality to operate with each instance of minimal instance set:
    CRUD, set dates (good reference of dynamic setting is Todoist [2]),
-   reference each other, e.g. Add task to the Project, Convert an Idea to a
-   Project/Task, Convert/Link an Event to a Project
-3. Two-way synchronization with Google Calendar for instance `Event` and maybe
-   for instances `Task` and `Project`
-4. Two-way synchronization with telegram bot (for the first time Therminbot) to
+   reference each other, e.g. Add task to the Project.
+3. Two-way synchronization with Google Calendar for instance `Task`
+5. Two-way synchronization with telegram bot (for the first time Therminbot) to
    overview and modify app's instances
-5. App should be hosted on web
-6. App should have descriptive (OpenAPI) API specification
-7. App should have functionality to implement and add own plugins
-8. Main language: English. Other languages added by plugins
-9. Projects can contain Tasks, Events and Ideas. Subprojects aren't allowed
-10. Subtasks aren't allowed
-11. Subevents aren't allowed
-12. Subideas aren't allowed, only one description body per Idea
-13. Task, Event or Idea could not have a parent Project directly
-14. Unassigned to Project Tasks, Events or Ideas resides in meta-project called
-    `Taskbox`
+6. App should be hosted on web
+7. App should have descriptive (OpenAPI) API specification
+8. App should have functionality to implement and add own extensions
+9. Main language: English. Other languages added by extensions
+10. Projects contains Tasks. Subprojects aren't allowed
+11. Subtasks aren't allowed
+12. Task could not have a parent Project directly
+13. Unassigned to Project's Tasks resides in meta-project called
+   `Unassigned`
+14. In future, there is a possibility to add new instance: `Event`
 
-# References
+## User interface
+![](home-wireframe.png)
+
+## Milestones
+No time limitations and milestones for this pet-project.
+
+## References
 1. [Design document structure example](https://blog.tara.ai/software-design-documents-template/)
 2. [Todoist](https://todoist.com)
+3. [Google Keep](https://keep.google.com)
