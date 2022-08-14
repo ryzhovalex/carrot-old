@@ -51,6 +51,10 @@ desirable functionality is appreciated.
 13. Unassigned to Project's Tasks resides in meta-project called
    `Unassigned`
 14. In future, there is a possibility to add new instance: `Event`
+15. Task may be assigned to date
+16. Task may be recurring and appear for each particular date
+17. User should have views: `Today`, `Projects`, `Taskbox`
+18. Taskbox contain tasks without a date
 
 ## User interface
 ![](home-wireframe.png)
