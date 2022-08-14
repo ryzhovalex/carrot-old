@@ -1,0 +1,36 @@
+tasks:
+  type: object
+  properties:
+    tasks: 
+      type: array
+      items:
+        $ref: '#/task'
+task:
+  type: object
+  properties:
+    task:
+      $ref: '#/task_inner'
+task_inner:
+  type: object
+  properties:
+    id:
+      $ref: common.yaml#/id
+    content:
+      $ref: '#/content'
+    creation_timestamp:
+      $ref: common.yaml#/timestamp
+    completion_timestamp:
+      $ref: common.yaml#/timestamp
+    next_due_timestamp:
+      $ref: common.yaml#/timestamp
+    is_completed:
+      $ref: '#/is_completed'
+    project_id:
+      $ref: common.yaml#/id
+
+content:
+  type: string
+  example: Pet a cat
+is_completed:
+  type: boolean
+  example: false

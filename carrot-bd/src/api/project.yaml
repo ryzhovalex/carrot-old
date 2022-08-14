@@ -1,0 +1,32 @@
+projects:
+  type: object
+  properties:
+    projects:
+      type: array
+      items:
+        $ref: '#/project'
+project:
+  type: object
+  properties:
+    project:
+      $ref: '#/project_inner'
+project_inner:
+  type: object
+  properties:
+    id:
+      $ref: common.yaml#/id
+    name:
+      $ref: '#/name'
+    creation_timestamp:
+      $ref: common.yaml#/timestamp
+    user_id:
+      $ref: common.yaml#/id
+    task_ids:
+      $ref: common.yaml#/ids
+
+name:
+  type: string
+  example: Carrot
+is_logged:
+  type: boolean
+  example: true

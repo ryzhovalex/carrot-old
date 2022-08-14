@@ -1,0 +1,111 @@
+info:
+  title: carrot
+  version: 0.1.0
+openapi: 3.0.2
+paths:
+  /login:
+    post:
+      summary: Login user into the system
+      description: >
+        Check if given username and password match for a user and generate
+        a JWT token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: auth.yaml#/login_data
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: auth.yaml#/login_token
+          description: >
+            Given credentials matched and user logged with token creation
+  /logout:
+    post:
+      summary: Logout user from the system
+      description: >
+        Destroy JWT token of user and thus logout him
+      parameters:
+        - $ref: common.yaml#/authorization_bearer_header
+      responses:
+        '200':
+          description: OK
+        '440':
+          $ref: auth.yaml#/session_expired_response
+
+  /self/user:
+    get:
+      summary: Get user for current auth token
+      parameters:
+        - $ref: common.yaml#/authorization_bearer_header
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: user.yaml#/user
+  /self/tasks:
+    get:
+      summary: Get self tasks
+      parameters:
+        - $ref: common.yaml#/authorization_bearer_header
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: task.yaml#/tasks
+  /self/projects:
+    get:
+      summary: Get self projects
+      parameters:
+        - $ref: common.yaml#/authorization_bearer_header
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: project.yaml#/projects
+
+  /users/{id}:
+    get:
+      summary: Get user
+      parameters:
+        - $ref: common.yaml#/id_path
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: user.yaml#/user
+  /users/{id}/tasks:
+    get:
+      summary: Get user's tasks
+      parameters:
+        - $ref: common.yaml#/id_path
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: task.yaml#/tasks
+  /users/{id}/projects:
+    get:
+      summary: Get user's projects
+      parameters:
+        - $ref: common.yaml#/id_path
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: project.yaml#/projects

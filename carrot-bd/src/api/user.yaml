@@ -1,0 +1,37 @@
+users:
+  type: object
+  properties:
+    users:
+      type: array
+      items:
+        $ref: '#/user'
+user:
+  type: object
+  properties:
+    user:
+      $ref: '#/user_inner'
+user_inner:
+  type: object
+  properties:
+    id:
+      $ref: common.yaml#/id
+    username:
+      $ref: '#/username'
+    task_ids:
+      $ref: common.yaml#/ids
+    project_ids:
+      $ref: common.yaml#/ids
+    is_logged:
+      $ref: '#/is_logged'
+    active_token:
+      $ref: common.yaml#/jwt_token 
+
+username:
+  type: string
+  example: ryzhovalex
+password:
+  type: string
+  example: helloworld1234
+is_logged:
+  type: boolean
+  example: true

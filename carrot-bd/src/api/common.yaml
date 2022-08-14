@@ -1,0 +1,32 @@
+id:
+  type: integer
+  minimum: 1
+  example: 1
+  description: Regular id of an entity
+ids:
+  type: array
+  items:
+    $ref: "#/id"
+jwt_token:
+  type: string
+  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+
+timestamp:
+  type: number
+  format: float
+  example: 1651059252.580393
+id_path:
+  in: path
+  name: id
+  description: Id parameter of requesting entity
+  required: true
+  schema:
+    $ref: "#/id"
+
+authorization_bearer_header:
+  in: header
+  name: Authorization
+  schema:
+    type: string
+    example: Bearer Qwt23flk
+  required: true
