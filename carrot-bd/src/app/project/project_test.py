@@ -2,7 +2,7 @@ from staze import Test, Mock, App, Database, validation, parsing, HttpClient
 from app.task.task_orm import TaskOrm
 from warepy import get_enum_values
 from pytest import fixture
-from .project import Project
+from app.project.project import Project
 from app.task.task import Task
 from app.project.project_orm import ProjectOrm
 from app.project.builtin_project_ids_enum import BuiltinProjectIdsEnum
@@ -19,27 +19,34 @@ def project_mock() -> ProjectMock:
 
 
 @fixture
-def project_orm(
-        app: App, database: Database,
-        project_mock: ProjectMock) -> ProjectOrm:
+def project_id(
+        app: App, db: Database,
+        project_mock: ProjectMock, user_id: int) -> int:
     with app.app_context():
-        return ProjectOrm.create(name=project_mock.name)
+        orm = ProjectOrm.create(name=project_mock.name, user_id=user_id)
+        id = orm.id
+        db.push(orm)
+        return id
 
 
 @fixture
-def project_orms(
-        app: App, database: Database, project_mock: ProjectMock,
-        multi_amount: int) -> list[ProjectOrm]:
+def project_ids(
+        app: App, db: Database, project_mock: ProjectMock,
+        multi_amount: int, user_id: int) -> list[int]:
     with app.app_context():
-        orms: list[ProjectOrm] = []
+        ids: list[int] = []
         for x in range(multi_amount):
-            orms.append(ProjectOrm.create(name=project_mock.name+str(x)))
-        return orms
+            orm = ProjectOrm.create(
+                name=project_mock.name+str(x),
+                user_id=user_id)
+            ids.append(orm.id)
+            db.push(orm)
+        return ids
 
 
 class TestApiProjectsSelf(Test):
     def test_get(
-        self, app: App, database: Database, project_orms: list[ProjectOrm],
+        self, app: App, db: Database, project_orms: list[ProjectOrm],
         multi_amount: int, http: HttpClient, authorization_header: str
     ):
         with app.app_context():
@@ -60,27 +67,29 @@ class TestApiProjectsSelf(Test):
 
 class TestApiProjectsId(Test):
     def test_patch(
-        self, app: App, database: Database, http: HttpClient,
-        project_orm: ProjectOrm
+        self, app: App, db: Database, http: HttpClient,
+        project_id: int
     ):
         with app.app_context():
             response = http.patch(
-                f'/projects/{project_orm.id}',
+                f'/projects/{project_id}',
                 200,
                 json={
                     'name': 'newname'
                 }
             )
 
-            project_orm = ProjectOrm.get_first(id=project_orm.id)
+            json: dict = parsing.parse(response.json, dict)
+            project: Project = Project(**json['project'])
+            project_orm = ProjectOrm.get_first(id=project_id)
 
             assert project_orm.name == 'newname'
 
 
 class TestApiProjects(Test):
     def test_post(
-        self, app: App, database: Database, http: HttpClient,
-        project_mock: ProjectMock, user_orm: UserOrm
+        self, app: App, db: Database, http: HttpClient,
+        project_mock: ProjectMock, user_id: int
     ):
         with app.app_context():
             response = http.post(
@@ -88,7 +97,7 @@ class TestApiProjects(Test):
                 200,
                 json={
                     'name': project_mock.name,
-                    'user_id': user_orm.id
+                    'user_id': user_id
                 }
             )   
 
@@ -97,4 +106,4 @@ class TestApiProjects(Test):
             project_orm = ProjectOrm.get_first(id=project.id)
 
             assert project_orm.name == project_mock.name
-            assert project_orm.user_id == user_orm.id
+            assert project_orm.user_id == user_id

@@ -22,11 +22,17 @@ class TaskOrm(Database.Orm):
     _completion_timestamp: float = Database.column(
         Database.float, default=0.0
     )
+    _user_id: int = Database.column(
+        Database.integer, Database.foreign_key('user_orm.id')
+    )
     # TODO: Add due date...
 
     @classmethod
-    def create(cls, content: str, project_id: int | None = None) -> 'TaskOrm':
+    def create(
+            cls, content: str, user_id: int,
+            project_id: int | None = None) -> 'TaskOrm':
         validation.validate(content, str)
+        validation.validate(user_id, int)
         if project_id is None:
             # Add task to unassigned project by default
             project_id = BuiltinProjectIdsEnum.UNASSIGNED.value
@@ -35,11 +41,11 @@ class TaskOrm(Database.Orm):
 
         model = cls(
             _content=content,
+            _user_id=user_id,
             _project_id=project_id,
             _creation_timestamp=datetime.now(timezone.utc).timestamp())
         log.bind(task_id=model.id).info('Create task')
-        Database.instance().push(model)
-        return cls.get_first(id=model.id)
+        return model
 
     @hybrid_property
     def content(self) -> str:
@@ -73,9 +79,23 @@ class TaskOrm(Database.Orm):
     @hybrid_property
     def model(self) -> Task:
         return Task(
+            id=self.id,
             content=self.content,
             is_completed=self.is_completed,
             project_id=self.project_id,
             creation_timestamp=self.creation_timestamp,
             completion_timestamp=self.completion_timestamp
         )
+
+    def complete(self):
+        if self.is_completed:
+            raise TaskError('Already completed')
+
+        log.bind(task_id=self.id).info('Complete task')
+        self._is_completed = True
+        self._completion_timestamp = datetime.now(timezone.utc).timestamp()
+
+    def move_to_project(self, project_id: int):
+        validation.validate(project_id, int)
+        log.bind(task_id=self.id).info(f'Move task to project {project_id}')
+        self._project_id = project_id

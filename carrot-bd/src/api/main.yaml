@@ -12,6 +12,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: user.yaml#/user
   /login:
     post:
       summary: Login user in the system
@@ -68,6 +72,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: task.yaml#/task
   /tasks/{id}/complete:
     post:
       summary: Complete task
@@ -76,6 +84,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: task.yaml#/task
   /tasks:
     post:
       summary: Create task
@@ -112,6 +124,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: project.yaml#/project
 
   /projects:
     post:
@@ -149,3 +165,7 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: user.yaml#/user

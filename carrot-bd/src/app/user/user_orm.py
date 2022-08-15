@@ -7,18 +7,20 @@ from app.auth.auth_error import AuthError
 
 if TYPE_CHECKING:
     hybrid_property = property
+    from app.task.task_orm import TaskOrm
+    from app.project.project_orm import ProjectOrm
 
 
 class UserOrm(Database.Orm):
     _username: str = Database.column(
         Database.string(150), nullable=False, unique=True)
     _password: str = Database.column(Database.string(150), nullable=False)
-    _task_orms: list[TaskOrm] = Database.relationship(
+    _task_orms: list['TaskOrm'] = Database.relationship(
         'TaskOrm',
         backref='user_orm',
         foreign_keys='[TaskOrm.user_id]'
     )
-    _project_orms: list[ProjectOrm] = Database.relationship(
+    _project_orms: list['ProjectOrm'] = Database.relationship(
         'ProjectOrm',
         backref='user_orm',
         foreign_keys='[ProjectOrm.user_id]'
@@ -31,8 +33,7 @@ class UserOrm(Database.Orm):
         model: 'UserOrm' = cls(
             _username=username,
             _password=security.generate_password_hash(password))
-        Database.instance().push(model)
-        return cls.get_first(id=model.id)
+        return model
 
     @hybrid_property
     def active_token(self) -> str:
@@ -50,6 +51,7 @@ class UserOrm(Database.Orm):
         log.bind(user_id=self.id).info('Set active token')
         validation.validate(token, str)
         self._active_token = token
+        Database.instance().commit()
 
     def check_password(self, password: str) -> bool:
         """Check given password against hashed one.
@@ -75,6 +77,7 @@ class UserOrm(Database.Orm):
     @hybrid_property
     def model(self) -> User:
         return User(
+            id=self.id,
             username=self.username,
             task_ids=self.task_ids,
             project_ids=self.project_ids,
@@ -83,6 +86,12 @@ class UserOrm(Database.Orm):
             # user isn't logged
             active_token=self._active_token
         )
+
+    @username.setter
+    def username(self, value: str):
+        log.bind(user_id=self.id).info('Set username')
+        validation.validate(value, str)
+        self._username = value
 
     def set_password(self, password: str):
         log.bind(user_id=self.id).info('Set new password for user')

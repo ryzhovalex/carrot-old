@@ -3,6 +3,7 @@ from staze import Test, App, Database, log, HttpClient, parsing, validation
 from warepy import get_enum_values
 from app.auth.login_data import LoginData
 from app.auth.auth_service import AuthService
+from app.user.user import User
 from app.auth.auth_error import AuthError
 from app.project.builtin_project_ids_enum import BuiltinProjectIdsEnum
 from app.user.user_test import UserMock
@@ -20,14 +21,14 @@ def login_data(user_mock: UserMock) -> LoginData:
 
 @fixture
 def login_user(
-        app: App, database: Database,
-        login_data: LoginData, user_orm: UserOrm) -> None:
+        app: App, db: Database,
+        login_data: LoginData, user_id: int) -> None:
     with app.app_context():
         AuthService.instance().login(login_data)
 
 
 @fixture
-def authorization_header(app: App, database: Database, login_user) -> str:
+def authorization_header(app: App, db: Database, login_user) -> str:
     with app.app_context():
         user_orm: UserOrm = UserOrm.get_first()
         return 'Bearer ' + user_orm.active_token
@@ -35,7 +36,7 @@ def authorization_header(app: App, database: Database, login_user) -> str:
 
 class TestApiRegister(Test):
     def test_post(
-        self, app: App, database: Database, http: HttpClient,
+        self, app: App, db: Database, http: HttpClient,
         user_mock: UserMock
     ):
         with app.app_context():
@@ -46,7 +47,10 @@ class TestApiRegister(Test):
                     'password': user_mock.password
                 })
 
-            user_orm: UserOrm = UserOrm.get_first()
+            json: dict = parsing.parse(response.json, dict)
+
+            user: User = User(**json['user'])
+            user_orm: UserOrm = UserOrm.get_first(id=user.id)
 
             assert user_orm.username == user_mock.username
             assert user_orm.check_password(user_mock.password)
@@ -57,18 +61,19 @@ class TestApiRegister(Test):
 
 class TestApiLogin(Test):
     def test_post(
-            self, app: App, database: Database, http: HttpClient,
+            self, app: App, db: Database, http: HttpClient,
             login_data: LoginData):
         with app.app_context():
             response = http.post('/login', 200, json=login_data.dict())
 
             json: dict = parsing.parse(response.json, dict)
-            parsing.parse_key('user_token', json, str) 
+            user_token: str = parsing.parse_key('user_token', json, str) 
+            assert user_token == UserOrm.get_first().active_token
 
 
 class TestApiLogout(Test):
     def test_post(
-            self, app: App, database: Database, http: HttpClient,
+            self, app: App, db: Database, http: HttpClient,
             authorization_header: str):
         with app.app_context():
             response = http.post(
