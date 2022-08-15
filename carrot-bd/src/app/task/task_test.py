@@ -115,38 +115,38 @@ class TestApiTasksId(Test):
             assert task_orm.project_id == project_orm.id
 
 
-    class TestApiTasks(Test):
-        def test_post(
-            self, app: App, database: Database, http: HttpClient,
-            task_mock: TaskMock
-        ):
-            with app.app_context():
-                response = http.post(
-                    '/tasks',
-                    200,
-                    json={
-                        'content': 'Pet cat'
-                    })
-                
-                task_orm = TaskOrm.get_first()
+class TestApiTasks(Test):
+    def test_post(
+        self, app: App, database: Database, http: HttpClient,
+        task_mock: TaskMock
+    ):
+        with app.app_context():
+            response = http.post(
+                '/tasks',
+                200,
+                json={
+                    'content': 'Pet cat'
+                })
+            
+            task_orm = TaskOrm.get_first()
 
-                assert task_orm.content == 'Pet cat'
-                assert task_orm.project_id == BuiltinProjectIdsEnum.UNASSIGNED
+            assert task_orm.content == 'Pet cat'
+            assert task_orm.project_id == BuiltinProjectIdsEnum.UNASSIGNED
 
-        def test_post_with_project(
-            self, app: App, database: Database, http: HttpClient,
-            task_mock: TaskMock, project_orm: ProjectOrm
-        ):
-            with app.app_context():
-                response = http.post(
-                    '/tasks',
-                    200,
-                    json={
-                        'content': 'Pet cat',
-                        'project_id': project_orm.id
-                    })
-                
-                task_orm = TaskOrm.get_first()
+    def test_post_with_project(
+        self, app: App, database: Database, http: HttpClient,
+        task_mock: TaskMock, project_orm: ProjectOrm
+    ):
+        with app.app_context():
+            response = http.post(
+                '/tasks',
+                200,
+                json={
+                    'content': 'Pet cat',
+                    'project_id': project_orm.id
+                })
+            
+            task_orm = TaskOrm.get_first()
 
-                assert task_orm.content == 'Pet cat'
-                assert task_orm.project_id == project_orm.id
+            assert task_orm.content == 'Pet cat'
+            assert task_orm.project_id == project_orm.id

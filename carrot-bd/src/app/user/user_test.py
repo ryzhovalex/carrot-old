@@ -1,7 +1,7 @@
 from pytest import fixture
 from staze import Test, Mock, App, Database, HttpClient, parsing, validation
-from .user_orm import UserOrm
-from .user import User
+from app.user.user_orm import UserOrm
+from app.user.user import User
 
 
 class UserMock(Mock):

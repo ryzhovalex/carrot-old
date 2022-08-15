@@ -72,6 +72,7 @@ class UserOrm(Database.Orm):
     def project_ids(self) -> list[int]:
         return [project_orm.id for project_orm in self._project_orm]
 
+    @hybrid_property
     def model(self) -> User:
         return User(
             username=self.username,

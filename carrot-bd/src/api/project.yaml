@@ -49,5 +49,5 @@ patch_request:
         properties:
           name:
             $ref: '#/name'
-          task_ids:
-            $ref: common.yaml#/ids
+          # No patch operations for task ids, since it's better to move task
+          # from task views (i.e. for each task independently)

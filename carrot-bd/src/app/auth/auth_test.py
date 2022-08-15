@@ -1,8 +1,10 @@
 from pytest import fixture
 from staze import Test, App, Database, log, HttpClient, parsing, validation
+from warepy import get_enum_values
 from app.auth.login_data import LoginData
 from app.auth.auth_service import AuthService
 from app.auth.auth_error import AuthError
+from app.project.builtin_project_ids_enum import BuiltinProjectIdsEnum
 from app.user.user_test import UserMock
 from app.user.user_orm import UserOrm
 from app.task.task_orm import TaskOrm
@@ -48,6 +50,9 @@ class TestApiRegister(Test):
 
             assert user_orm.username == user_mock.username
             assert user_orm.check_password(user_mock.password)
+            # Ensure default projects are created for user
+            assert user_orm.project_ids == get_enum_values(
+                BuiltinProjectIdsEnum)
 
 
 class TestApiLogin(Test):
