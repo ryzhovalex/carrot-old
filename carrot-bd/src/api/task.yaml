@@ -30,7 +30,28 @@ task_inner:
 
 content:
   type: string
-  example: Pet a cat
+  example: Pet cat
 is_completed:
   type: boolean
   example: false
+
+create_request:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          content:
+            $ref: '#/content'
+          project_id:
+            $ref: common.yaml#/id
+patch_request:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          content:
+            $ref: '#content'
+          project_id:
+            $ref: common.yaml#/id

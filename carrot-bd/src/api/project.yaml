@@ -30,3 +30,24 @@ name:
 is_logged:
   type: boolean
   example: true
+
+create_request:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            $ref: '#/name'
+          user_id:
+            $ref: common.yaml#/id
+patch_request:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            $ref: '#/name'
+          task_ids:
+            $ref: common.yaml#/ids

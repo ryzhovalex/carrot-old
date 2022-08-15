@@ -5,6 +5,8 @@ from app.auth.auth_service import AuthService
 from app.auth.auth_error import AuthError
 from app.user.user_test import UserMock
 from app.user.user_orm import UserOrm
+from app.task.task_orm import TaskOrm
+from app.project.project_orm import ProjectOrm
 
 
 @fixture
@@ -15,7 +17,9 @@ def login_data(user_mock: UserMock) -> LoginData:
 
 
 @fixture
-def login_user(app: App, database: Database, login_data: LoginData) -> None:
+def login_user(
+        app: App, database: Database,
+        login_data: LoginData, user_orm: UserOrm) -> None:
     with app.app_context():
         AuthService.instance().login(login_data)
 
@@ -27,9 +31,28 @@ def authorization_header(app: App, database: Database, login_user) -> str:
         return 'Bearer ' + user_orm.active_token
 
 
+class TestApiRegister(Test):
+    def test_post(
+        self, app: App, database: Database, http: HttpClient,
+        user_mock: UserMock
+    ):
+        with app.app_context():
+            response = http.post(
+                '/register', 200,
+                json={
+                    'username': user_mock.username,
+                    'password': user_mock.password
+                })
+
+            user_orm: UserOrm = UserOrm.get_first()
+
+            assert user_orm.username == user_mock.username
+            assert user_orm.check_password(user_mock.password)
+
+
 class TestApiLogin(Test):
     def test_post(
-            self, app: App, db: Database, http: HttpClient,
+            self, app: App, database: Database, http: HttpClient,
             login_data: LoginData):
         with app.app_context():
             response = http.post('/login', 200, json=login_data.dict())
@@ -40,7 +63,7 @@ class TestApiLogin(Test):
 
 class TestApiLogout(Test):
     def test_post(
-            self, app: App, db: Database, http: HttpClient,
+            self, app: App, database: Database, http: HttpClient,
             authorization_header: str):
         with app.app_context():
             response = http.post(
@@ -51,7 +74,7 @@ class TestApiLogout(Test):
 
             user_orm: UserOrm = UserOrm.instance().get_first()
 
-            assert not user_orm.is_logged()
+            assert not user_orm.is_logged
             try:
                 user_orm.active_token
             except AuthError:

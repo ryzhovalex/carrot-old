@@ -13,12 +13,12 @@ class UserOrm(Database.Orm):
     _username: str = Database.column(
         Database.string(150), nullable=False, unique=True)
     _password: str = Database.column(Database.string(150), nullable=False)
-    _task_orms: list[TaskOrm] = Database.column(
+    _task_orms: list[TaskOrm] = Database.relationship(
         'TaskOrm',
         backref='user_orm',
         foreign_keys='[TaskOrm.user_id]'
     )
-    _project_orms: list[ProjectOrm] = Database.column(
+    _project_orms: list[ProjectOrm] = Database.relationship(
         'ProjectOrm',
         backref='user_orm',
         foreign_keys='[ProjectOrm.user_id]'
@@ -47,7 +47,7 @@ class UserOrm(Database.Orm):
 
     @active_token.setter
     def active_token(self, token: str):
-        log.info('Set active token for {}', self._username)
+        log.bind(user_id=self.id).info('Set active token')
         validation.validate(token, str)
         self._active_token = token
 
@@ -82,3 +82,8 @@ class UserOrm(Database.Orm):
             # user isn't logged
             active_token=self._active_token
         )
+
+    def set_password(self, password: str):
+        log.bind(user_id=self.id).info('Set new password for user')
+        validation.validate(password, str)
+        self._password = password

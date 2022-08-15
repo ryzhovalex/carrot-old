@@ -26,6 +26,17 @@ user_inner:
     active_token:
       $ref: common.yaml#/jwt_token 
 
+patch_request:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          username:
+            $ref: '#/username'
+          password:
+            $ref: '#/password'
+
 username:
   type: string
   example: ryzhovalex

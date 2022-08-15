@@ -1,11 +1,20 @@
 info:
   title: carrot
-  version: 0.1.0
+  version: 0.1.0dev
 openapi: 3.0.2
 paths:
+  # Auth #
+  /register:
+    post:
+      summary: Register user in the system
+      requestBody:
+        $ref: auth.yaml#/register_request
+      responses:
+        '200':
+          description: OK
   /login:
     post:
-      summary: Login user into the system
+      summary: Login user in the system
       description: >
         Check if given username and password match for a user and generate
         a JWT token
@@ -17,12 +26,12 @@ paths:
         required: true
       responses:
         '200':
+          description: >
+            Given credentials matched and user logged with token creation
           content:
             application/json:
               schema:
                 $ref: auth.yaml#/login_token
-          description: >
-            Given credentials matched and user logged with token creation
   /logout:
     post:
       summary: Logout user from the system
@@ -36,19 +45,8 @@ paths:
         '440':
           $ref: auth.yaml#/session_expired_response
 
-  /self/user:
-    get:
-      summary: Get user for current auth token
-      parameters:
-        - $ref: common.yaml#/authorization_bearer_header
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: user.yaml#/user
-  /self/tasks:
+  # Task #
+  /tasks/self:
     get:
       summary: Get self tasks
       parameters:
@@ -60,7 +58,39 @@ paths:
             application/json:
               schema:
                 $ref: task.yaml#/tasks
-  /self/projects:
+  /tasks/{id}:
+    patch:
+      summary: Patch task
+      parameters:
+        - $ref: common.yaml#/id_path
+      requestBody:
+        $ref: task.yaml#/patch_request
+      responses:
+        '200':
+          description: OK
+  /tasks/{id}/complete:
+    post:
+      summary: Complete task
+      parameters:
+        - $ref: common.yaml#/id_path
+      responses:
+        '200':
+          description: OK
+  /tasks:
+    post:
+      summary: Create task
+      requestBody:
+        $ref: task.yaml#/create_request
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: task.yaml#/task
+
+  # Project #
+  /projects/self:
     get:
       summary: Get self projects
       parameters:
@@ -72,12 +102,35 @@ paths:
             application/json:
               schema:
                 $ref: project.yaml#/projects
-
-  /users/{id}:
-    get:
-      summary: Get user
+  /projects/{id}:
+    patch:
+      summary: Patch project
       parameters:
         - $ref: common.yaml#/id_path
+      requestBody:
+        $ref: project.yaml#/patch_request
+      responses:
+        '200':
+          description: OK
+  /projects:
+    post:
+      summary: Create project
+      requestBody:
+        $ref: project.yaml#/create_request
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: project.yaml#/project
+
+  # User #
+  /users/self:
+    get:
+      summary: Get user for current auth token
+      parameters:
+        - $ref: common.yaml#/authorization_bearer_header
       responses:
         '200':
           description: OK
@@ -85,27 +138,13 @@ paths:
             application/json:
               schema:
                 $ref: user.yaml#/user
-  /users/{id}/tasks:
-    get:
-      summary: Get user's tasks
+  /users/{id}:
+    patch:
+      summary: Patch user
       parameters:
         - $ref: common.yaml#/id_path
+      requestBody:
+        $ref: user.yaml#/patch_request
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: task.yaml#/tasks
-  /users/{id}/projects:
-    get:
-      summary: Get user's projects
-      parameters:
-        - $ref: common.yaml#/id_path
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: project.yaml#/projects

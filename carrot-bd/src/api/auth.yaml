@@ -2,13 +2,24 @@ login_token:
   type: object
   properties:
     user_token:
-        $ref: "common.yaml#/jwt_token"
+        $ref: common.yaml#/jwt_token
 login_data:
   type: object
   properties:
     username:
-      $ref: "user.yaml#/username"
+      $ref: user.yaml#/username
     password:
-      $ref: "user.yaml#/password"
+      $ref: user.yaml#/password
 session_expired_response:
   description: User's session expired
+
+register_request:
+  content:
+    application/json:
+      schema:
+        type: object            
+        properties:
+          username:
+            $ref: user.yaml#/username
+          password:
+            $ref: user.yaml#/password
