@@ -1,11 +1,15 @@
 from pytest import fixture
 from staze import Test, App, Database, log, HttpClient, parsing, validation
 from app.auth.login_data import LoginData
+from app.auth.auth_service import AuthService
+from app.auth.auth_error import AuthError
+from app.user.user_test import UserMock
+from app.user.user_orm import UserOrm
 
 
 @fixture
 def login_data(user_mock: UserMock) -> LoginData:
-    login_data: LoginData = LoginData(
+    return LoginData(
         username=user_mock.username,
         password=user_mock.password)
 
